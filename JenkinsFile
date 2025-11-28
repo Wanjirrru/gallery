@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'Node18'   
+    }
+
+    environment {
+        RENDER_DEPLOY_HOOK = 'https://api.render.com/deploy/srv-d4l1bs2li9vc73e1qmm0?key=4pfh8qK4Br0'   
+    }
+
+    stages {
+        stage('Install dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Trigger Render deploy') {
+            steps {
+                sh 'curl "$RENDER_DEPLOY_HOOK"'
+            }
+        }
+    }
+
+    post {
+        success { echo 'Deployed via Jenkins!' }
+        failure { echo 'Jenkins build failed' }
+    }
+}

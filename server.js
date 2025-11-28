@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const config = require('./_config');               // ← this line is crucial
+const config = require('./_config');               
 
 // Define routes
 let index = require('./routes/index');
