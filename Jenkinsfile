@@ -1,19 +1,20 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node18'   
+    }
+
     environment {
         RENDER_DEPLOY_HOOK = 'https://api.render.com/deploy/srv-d4l1bs2li9vc73e1qmm0?key=4pfh8qK4Br0'
         RENDER_URL         = 'https://gallery-v88k.onrender.com'
     }
 
     stages {
-        stage('Setup Node') {
+        stage('Verify Node') {
             steps {
-                sh '''
-                    export PATH=/usr/bin:$PATH
-                    node --version
-                    npm --version
-                '''
+                sh 'node --version'  
+                sh 'npm --version'
             }
         }
 
@@ -30,7 +31,7 @@ pipeline {
             post {
                 failure {
                     emailext to: 'melissa.ndirangu@student.moringaschool.com',
-                             subject: "Tests FAILED – Build #${BUILD_NUMBER}",
+                             subject: "Gallery Tests FAILED – Build #${BUILD_NUMBER}",
                              body: "Check ${BUILD_URL}"
                 }
             }
@@ -47,12 +48,7 @@ pipeline {
         success {
             slackSend channel: '#melissa_ip1',
                       color: 'good',
-                      message: "*Gallery deployed!* \nBuild #${BUILD_NUMBER}\n${RENDER_URL}"
-        }
-        failure {
-            slackSend channel: '#melissa_ip1',
-                      color: 'danger',
-                      message: "*Deployment failed* \nBuild #${BUILD_NUMBER}"
+                      message: "*Gallery deployed successfully!*\nBuild #${BUILD_NUMBER}\n${RENDER_URL}"
         }
     }
 }
