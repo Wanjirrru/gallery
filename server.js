@@ -32,6 +32,13 @@ app.use('/', index);
 app.use('/image', image);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is listening at http://localhost:${PORT}`);
-});
+
+// Only start listening if NOT in test mode
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log(`Server is listening at http://localhost:${PORT}`);
+    });
+}
+
+// Export the app for testing
+module.exports = app;   
