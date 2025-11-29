@@ -9,8 +9,8 @@ pipeline {
     stages {
         stage('Verify Node & NPM') {
             steps {
-                sh 'node --version'   // Should show v18.x.x
-                sh 'npm --version'    // Should show 9.x or 10.x
+                sh 'node --version'   
+                sh 'npm --version'    
             }
         }
 
