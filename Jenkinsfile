@@ -7,35 +7,36 @@ pipeline {
     }
 
     stages {
-        stage('Verify Node & NPM') {
+        stage('Setup Node') {
             steps {
-                sh 'node --version'   
-                sh 'npm --version'    
+                sh '''
+                    export PATH=/usr/local/bin:$PATH
+                    node --version
+                    npm --version
+                '''
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install') {
             steps {
                 sh 'npm install'
             }
         }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
                 sh 'npm test'
             }
             post {
                 failure {
-                    emailext (
-                        to: 'melissa.ndirangu@student.moringaschool.com',
-                        subject: "Gallery Tests FAILED – Build #${env.BUILD_NUMBER}",
-                        body: "Check console output at ${env.BUILD_URL}"
-                    )
+                    emailext to: 'melissa.ndirangu@student.moringaschool.com',
+                             subject: "Tests FAILED – Build #${BUILD_NUMBER}",
+                             body: "Check ${BUILD_URL}"
                 }
             }
         }
 
-        stage('Deploy to Render') {
+        stage('Deploy') {
             steps {
                 sh 'curl "$RENDER_DEPLOY_HOOK"'
             }
@@ -44,18 +45,14 @@ pipeline {
 
     post {
         success {
-            slackSend (
-                channel: '#melissa_ip1',
-                color: 'good',
-                message: "*Gallery deployed successfully!* \nBuild: #${env.BUILD_NUMBER}\nLink: ${RENDER_URL}"
-            )
+            slackSend channel: '#melissa_ip1',
+                      color: 'good',
+                      message: "*Gallery deployed!* \nBuild #${BUILD_NUMBER}\n${RENDER_URL}"
         }
         failure {
-            slackSend (
-                channel: '#melissa_ip1',
-                color: 'danger',
-                message: "*Gallery deployment FAILED* \nBuild: #${env.BUILD_NUMBER}\nCheck: ${env.BUILD_URL}"
-            )
+            slackSend channel: '#melissa_ip1',
+                      color: 'danger',
+                      message: "*Deployment failed* \nBuild #${BUILD_NUMBER}"
         }
     }
 }
