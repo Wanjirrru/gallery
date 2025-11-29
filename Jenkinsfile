@@ -46,9 +46,10 @@ pipeline {
 
     post {
         success {
-            slackSend channel: '#melissa_ip1',
-                      color: 'good',
-                      message: "*Gallery deployed successfully!*\nBuild #${BUILD_NUMBER}\n${RENDER_URL}"
+            slackSend(
+                channel: '#melissa_ip1',
+                color: 'good',
+                message: "*Gallery deployed successfully!*\nBuild #${BUILD_NUMBER}\nLive: ${RENDER_URL}"
+            )
         }
     }
-}
